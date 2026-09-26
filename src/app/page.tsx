@@ -76,7 +76,6 @@ export default function Home() {
   const [game, setGame] = useState<GamePayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("play");
-  const [roleHidden, setRoleHidden] = useState(false);
   const [busy, setBusy] = useState(false);
   const [excluded, setExcluded] = useState<string[]>([]);
   const [replacements, setReplacements] = useState<string[]>([]);
@@ -275,13 +274,7 @@ export default function Home() {
           </p>
         )}
 
-        {tab === "play" && (
-          <PlayTab
-            game={game}
-            roleHidden={roleHidden}
-            onToggleHide={() => setRoleHidden((v) => !v)}
-          />
-        )}
+        {tab === "play" && <PlayTab game={game} />}
         {tab === "rules" && <RulesTab game={game} />}
         {tab === "admin" && isAdmin && (
           <AdminTab
@@ -337,15 +330,9 @@ function Atmosphere() {
   );
 }
 
-function PlayTab({
-  game,
-  roleHidden,
-  onToggleHide,
-}: {
-  game: GamePayload;
-  roleHidden: boolean;
-  onToggleHide: () => void;
-}) {
+function PlayTab({ game }: { game: GamePayload }) {
+  const [teamHidden, setTeamHidden] = useState(false);
+  const [roleHidden, setRoleHidden] = useState(false);
   const role = game.yourRole;
 
   if (game.phase === "lobby") {
@@ -391,46 +378,62 @@ function PlayTab({
     );
   }
 
+  const bothHidden = teamHidden && roleHidden;
+  const headerBg = teamHidden ? "#5c5a66" : role.teamColor;
+  const cardBg = teamHidden ? "#e6e4ea" : role.teamColorMuted;
+
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-start justify-between gap-3">
         <h2 className="font-display text-3xl text-[var(--ink)]">Your role</h2>
-        <button
-          type="button"
-          onClick={onToggleHide}
-          className="min-h-10 rounded-lg border border-[var(--line)] bg-white/80 px-3 text-sm font-semibold text-[var(--ink)]"
-        >
-          {roleHidden ? "Show" : "Hide"}
-        </button>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={() => setTeamHidden((v) => !v)}
+            className="min-h-10 rounded-lg border border-[var(--line)] bg-white/80 px-3 text-sm font-semibold text-[var(--ink)]"
+          >
+            {teamHidden ? "Show team" : "Hide team"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleHidden((v) => !v)}
+            className="min-h-10 rounded-lg border border-[var(--line)] bg-white/80 px-3 text-sm font-semibold text-[var(--ink)]"
+          >
+            {roleHidden ? "Show role" : "Hide role"}
+          </button>
+        </div>
       </div>
 
-      {roleHidden ? (
+      {bothHidden ? (
         <div className="flex min-h-48 items-center justify-center rounded-3xl border border-dashed border-[var(--line)] bg-white/50">
-          <p className="text-[var(--ink-soft)]">Role hidden</p>
+          <p className="text-[var(--ink-soft)]">Team & role hidden</p>
         </div>
       ) : (
         <article
           className="overflow-hidden rounded-3xl border border-[var(--line)] shadow-sm"
-          style={{ background: role.teamColorMuted }}
+          style={{ background: cardBg }}
         >
-          <div
-            className="px-5 py-4 text-white"
-            style={{ background: role.teamColor }}
-          >
+          <div className="px-5 py-4 text-white" style={{ background: headerBg }}>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] opacity-90">
-              {role.teamName}
+              {teamHidden ? "Team hidden" : role.teamName}
             </p>
-            <h3 className="font-display mt-1 text-3xl">{role.name}</h3>
+            <h3 className="font-display mt-1 text-3xl">
+              {roleHidden ? "Role hidden" : role.name}
+            </h3>
           </div>
-          <div className="space-y-4 px-5 py-5 text-[var(--ink)]">
-            <p className="text-base leading-relaxed">{role.summary}</p>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-soft)]">
-                What to do
-              </p>
-              <p className="mt-1 text-base leading-relaxed">{role.instructions}</p>
+          {!roleHidden && (
+            <div className="space-y-4 px-5 py-5 text-[var(--ink)]">
+              <p className="text-base leading-relaxed">{role.summary}</p>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-soft)]">
+                  What to do
+                </p>
+                <p className="mt-1 text-base leading-relaxed">
+                  {role.instructions}
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </article>
       )}
 

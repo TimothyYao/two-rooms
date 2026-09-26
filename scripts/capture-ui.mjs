@@ -49,10 +49,14 @@ await page.screenshot({
 
 await page.getByRole("button", { name: "Play" }).click();
 await page.waitForTimeout(800);
-await page.getByRole("button", { name: "Hide" }).click();
-await page.waitForTimeout(600);
-await page.getByRole("button", { name: "Show" }).click();
-await page.waitForTimeout(600);
+await page.getByRole("button", { name: "Hide team" }).click();
+await page.waitForTimeout(400);
+await page.getByRole("button", { name: "Hide role" }).click();
+await page.waitForTimeout(400);
+await page.getByRole("button", { name: "Show team" }).click();
+await page.waitForTimeout(400);
+await page.getByRole("button", { name: "Show role" }).click();
+await page.waitForTimeout(400);
 await page.getByRole("button", { name: "Host" }).click();
 await page.waitForTimeout(1000);
 
