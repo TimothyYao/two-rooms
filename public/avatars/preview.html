@@ -1,81 +1,139 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Avatar preview</title>
-<style>
-body{font-family:system-ui,sans-serif;margin:0;padding:1rem;background:#eef3e8;color:#1c241c}
-h1{font-size:1.4rem}
-grid, .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
-figure{margin:0;background:#fff;border-radius:16px;padding:10px;text-align:center;border:1px solid #cfd6c6}
-video{width:100%;aspect-ratio:1;object-fit:cover;border-radius:999px;background:#f3efe6}
-figcaption{margin-top:8px;font-size:12px;font-weight:600}
-</style></head><body>
-<h1>Two Flocks — avatar idle preview</h1>
-<p>21 characters · autoplay muted loops</p>
-<div class="grid">
-<figure>
-  <video src="/avatars/animations/alpha-idle.webm" poster="/avatars/stills/alpha.webp" autoplay muted loop playsinline></video>
-  <figcaption>alpha</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/black-sheep-idle.webm" poster="/avatars/stills/black-sheep.webp" autoplay muted loop playsinline></video>
-  <figcaption>black-sheep</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/broker-sheep-idle.webm" poster="/avatars/stills/broker-sheep.webp" autoplay muted loop playsinline></video>
-  <figcaption>broker-sheep</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/broker-wolf-idle.webm" poster="/avatars/stills/broker-wolf.webp" autoplay muted loop playsinline></video>
-  <figcaption>broker-wolf</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/gossip-sheep-idle.webm" poster="/avatars/stills/gossip-sheep.webp" autoplay muted loop playsinline></video>
-  <figcaption>gossip-sheep</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/gossip-wolf-idle.webm" poster="/avatars/stills/gossip-wolf.webp" autoplay muted loop playsinline></video>
-  <figcaption>gossip-wolf</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/guardian-sheep-idle.webm" poster="/avatars/stills/guardian-sheep.webp" autoplay muted loop playsinline></video>
-  <figcaption>guardian-sheep</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/guardian-wolf-idle.webm" poster="/avatars/stills/guardian-wolf.webp" autoplay muted loop playsinline></video>
-  <figcaption>guardian-wolf</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/infiltrator-sheep-idle.webm" poster="/avatars/stills/infiltrator-sheep.webp" autoplay muted loop playsinline></video>
-  <figcaption>infiltrator-sheep</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/infiltrator-wolf-idle.webm" poster="/avatars/stills/infiltrator-wolf.webp" autoplay muted loop playsinline></video>
-  <figcaption>infiltrator-wolf</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/lamb-idle.webm" poster="/avatars/stills/lamb.webp" autoplay muted loop playsinline></video>
-  <figcaption>lamb</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/lost-lamb-idle.webm" poster="/avatars/stills/lost-lamb.webp" autoplay muted loop playsinline></video>
-  <figcaption>lost-lamb</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/lucky-sheep-idle.webm" poster="/avatars/stills/lucky-sheep.webp" autoplay muted loop playsinline></video>
-  <figcaption>lucky-sheep</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/sheep-idle.webm" poster="/avatars/stills/sheep.webp" autoplay muted loop playsinline></video>
-  <figcaption>sheep</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/shepherd-idle.webm" poster="/avatars/stills/shepherd.webp" autoplay muted loop playsinline></video>
-  <figcaption>shepherd</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/shy-sheep-idle.webm" poster="/avatars/stills/shy-sheep.webp" autoplay muted loop playsinline></video>
-  <figcaption>shy-sheep</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/shy-wolf-idle.webm" poster="/avatars/stills/shy-wolf.webp" autoplay muted loop playsinline></video>
-  <figcaption>shy-wolf</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/silent-sheep-idle.webm" poster="/avatars/stills/silent-sheep.webp" autoplay muted loop playsinline></video>
-  <figcaption>silent-sheep</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/silent-wolf-idle.webm" poster="/avatars/stills/silent-wolf.webp" autoplay muted loop playsinline></video>
-  <figcaption>silent-wolf</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/werewolf-idle.webm" poster="/avatars/stills/werewolf.webp" autoplay muted loop playsinline></video>
-  <figcaption>werewolf</figcaption>
-</figure><figure>
-  <video src="/avatars/animations/wolf-idle.webm" poster="/avatars/stills/wolf.webp" autoplay muted loop playsinline></video>
-  <figcaption>wolf</figcaption>
-</figure>
-</div>
-</body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Avatar preview — Two Flocks</title>
+    <style>
+      :root {
+        --ink: #1c241c;
+        --ink-soft: #4a5548;
+        --line: #cfd6c6;
+        --meadow: #2f6b4f;
+        --bg: #eef3e8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 1rem 1rem 3rem;
+        font-family: system-ui, -apple-system, sans-serif;
+        background:
+          radial-gradient(ellipse 120% 80% at 10% -10%, #c8e0c0 0%, transparent 50%),
+          radial-gradient(ellipse 90% 70% at 100% 0%, #e8d5c4 0%, transparent 45%),
+          linear-gradient(165deg, #eef3e8 0%, #f4ebe1 48%, #e7eef0 100%);
+        color: var(--ink);
+      }
+      h1 {
+        font-size: 1.6rem;
+        margin: 0 0 0.25rem;
+      }
+      .sub {
+        color: var(--ink-soft);
+        margin: 0 0 1.25rem;
+        font-size: 0.95rem;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+        max-width: 920px;
+      }
+      .card {
+        margin: 0;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 12px 10px 14px;
+        text-align: center;
+      }
+      .avatar {
+        width: 112px;
+        height: 112px;
+        margin: 0 auto;
+        border-radius: 999px;
+        overflow: hidden;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 14px rgba(28, 36, 28, 0.12);
+        background: #f3efe6;
+      }
+      .avatar video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .name {
+        margin-top: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .role {
+        margin-top: 2px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--meadow);
+        text-transform: capitalize;
+      }
+      .meta {
+        margin-top: 4px;
+        font-size: 0.7rem;
+        color: var(--ink-soft);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Two Flocks — guy preview</h1>
+    <p class="sub">
+      Fake lobby players with Muse idle animations. Not a real game — just for checking looks.
+    </p>
+    <div class="grid" id="grid"></div>
+    <script>
+      const ROSTER = [
+        { guy: "Tim", role: "The Lamb", key: "lamb", team: "Sheep" },
+        { guy: "Marcus", role: "The Wolf", key: "wolf", team: "Wolves" },
+        { guy: "Diego", role: "Sheep", key: "sheep", team: "Sheep" },
+        { guy: "Owen", role: "Wolf", key: "wolf", team: "Wolves" },
+        { guy: "Noah", role: "Moonbitten", key: "werewolf", team: "Wanderers" },
+        { guy: "Sam", role: "Shepherd", key: "shepherd", team: "Sheep" },
+        { guy: "Kai", role: "Alpha", key: "alpha", team: "Wolves" },
+        { guy: "Ben", role: "Shy Sheep", key: "shy-sheep", team: "Sheep" },
+        { guy: "Leo", role: "Shy Wolf", key: "shy-wolf", team: "Wolves" },
+        { guy: "Chris", role: "Infiltrator Sheep", key: "infiltrator-sheep", team: "Sheep" },
+        { guy: "Jake", role: "Infiltrator Wolf", key: "infiltrator-wolf", team: "Wolves" },
+        { guy: "Ryan", role: "Broker Sheep", key: "broker-sheep", team: "Sheep" },
+        { guy: "Cole", role: "Broker Wolf", key: "broker-wolf", team: "Wolves" },
+        { guy: "Max", role: "Guardian Sheep", key: "guardian-sheep", team: "Sheep" },
+        { guy: "Drew", role: "Guardian Wolf", key: "guardian-wolf", team: "Wolves" },
+        { guy: "Eli", role: "Silent Sheep", key: "silent-sheep", team: "Sheep" },
+        { guy: "Jude", role: "Silent Wolf", key: "silent-wolf", team: "Wolves" },
+        { guy: "Nate", role: "Gossip Sheep", key: "gossip-sheep", team: "Sheep" },
+        { guy: "Wes", role: "Gossip Wolf", key: "gossip-wolf", team: "Wolves" },
+        { guy: "Finn", role: "Lucky Sheep", key: "lucky-sheep", team: "Sheep" },
+        { guy: "Ash", role: "Lost Lamb", key: "lost-lamb", team: "Wanderers" },
+        { guy: "Rex", role: "Black Sheep", key: "black-sheep", team: "Wanderers" },
+      ];
+
+      const grid = document.getElementById("grid");
+      for (const p of ROSTER) {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="avatar">
+            <video
+              src="/avatars/animations/${p.key}-idle.webm"
+              poster="/avatars/stills/${p.key}.webp"
+              autoplay muted loop playsinline
+              aria-label="${p.role}"
+            ></video>
+          </div>
+          <div class="name">${p.guy}</div>
+          <div class="role">${p.role}</div>
+          <div class="meta">${p.team}</div>
+        `;
+        grid.appendChild(card);
+      }
+    </script>
+  </body>
+</html>
