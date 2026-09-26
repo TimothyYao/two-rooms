@@ -37,6 +37,18 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Role avatars
+
+Muse character pack lives in `public/avatars/`:
+- `stills/*.webp` — posters
+- `animations/*-idle.webm` — looping idle clips
+
+Mapping is in `src/lib/roles/avatars.ts`. Temporary stand-ins until dedicated art exists:
+- Fortune Teller → `black-sheep`
+- Village Watch → `shepherd`
+- Marked → `werewolf`
+- Generic pack Wolf → `wolf` (same as The Wolf)
+
 ## Persistence (Vercel)
 
 Game state uses **Upstash Redis** (free tier) or **Vercel KV** when these env vars are set:

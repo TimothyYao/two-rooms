@@ -10,3 +10,5 @@ export {
   SPECIAL_GROUPS,
 } from "./deck";
 export type { DeckBuildOptions } from "./deck";
+export { ROLE_AVATAR, getAvatarAssets } from "./avatars";
+export type { AvatarKey, AvatarAssets } from "./avatars";
