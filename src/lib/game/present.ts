@@ -22,19 +22,40 @@ export function presentRole(roleId: RoleId) {
 export function presentDeckCounts(
   counts: { roleId: RoleId; count: number }[],
 ) {
-  return counts
-    .map((c) => {
-      const p = presentRole(c.roleId);
-      return {
+  // Aggregate by themed display name so pairs like Moonbitten show as ×2
+  const byName = new Map<
+    string,
+    {
+      roleId: RoleId;
+      count: number;
+      name: string;
+      teamName: string;
+      teamColor: string;
+      canonicalName: string;
+    }
+  >();
+
+  for (const c of counts) {
+    const p = presentRole(c.roleId);
+    const key = `${p.name}::${p.teamName}`;
+    const existing = byName.get(key);
+    if (existing) {
+      existing.count += c.count;
+    } else {
+      byName.set(key, {
         roleId: c.roleId,
         count: c.count,
         name: p.name,
         teamName: p.teamName,
         teamColor: p.teamColor,
         canonicalName: p.canonicalName,
-      };
-    })
-    .sort((a, b) => a.name.localeCompare(b.name) || a.roleId.localeCompare(b.roleId));
+      });
+    }
+  }
+
+  return [...byName.values()].sort(
+    (a, b) => a.name.localeCompare(b.name) || a.roleId.localeCompare(b.roleId),
+  );
 }
 
 export function hostageHint(playerCount: number) {

@@ -528,7 +528,7 @@ function AdminTab({
           onClick={onStart}
           className="col-span-2 min-h-12 rounded-xl bg-[var(--meadow)] text-base font-semibold text-white disabled:opacity-50"
         >
-          {game.phase === "in_progress" ? "Deal again (same as redeal)" : "Start & deal roles"}
+          {game.phase === "in_progress" ? "Redeal all roles" : "Start & deal roles"}
         </button>
         <button
           type="button"
