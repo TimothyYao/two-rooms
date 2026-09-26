@@ -35,6 +35,7 @@ type GamePayload = {
   deckCounts: DeckCount[];
   deckConfig: { excluded: string[]; replacements: string[] };
   dealGeneration: number;
+  persistent?: boolean;
   you?: { id: string; name: string; isAdmin: boolean; roleId?: string };
   yourRole: PresentedRole | null;
   hostageHint: {
@@ -518,6 +519,15 @@ function AdminTab({
         <p className="mt-1 text-[var(--ink-soft)]">
           You see role counts only — never who has which role. You also get a
           role when the game starts.
+        </p>
+        <p
+          className={`mt-2 text-xs font-semibold uppercase tracking-wide ${
+            game.persistent ? "text-[var(--meadow)]" : "text-[var(--wolf)]"
+          }`}
+        >
+          {game.persistent
+            ? "Shared DB connected"
+            : "In-memory only — add Upstash/Vercel KV for multiplayer"}
         </p>
       </div>
 

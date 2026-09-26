@@ -37,7 +37,14 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Game state is in-memory (fine for one Node process / party night). For multi-instance Vercel, add a shared store (Redis/KV) later.
+## Persistence (Vercel)
+
+Game state uses **Upstash Redis** (free tier) or **Vercel KV** when these env vars are set:
+
+- `KV_REST_API_URL` + `KV_REST_API_TOKEN` (Vercel Storage → KV), **or**
+- `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (upstash.com)
+
+Without them, the app falls back to in-memory state (local `npm run dev` still works).
 
 ## Scripts
 

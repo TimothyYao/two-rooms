@@ -23,6 +23,8 @@ export type GameState = {
   deck: RoleId[];
   startedAt?: number;
   dealGeneration: number;
+  /** Bumped on each persisted write (optimistic / debugging). */
+  version: number;
 };
 
 export const ADMIN_NAME = "Tim";
