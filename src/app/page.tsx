@@ -15,6 +15,8 @@ type PresentedRole = {
   teamColorMuted: string;
   canonicalName: string;
   primary: boolean;
+  avatarStill?: string;
+  avatarAnimation?: string;
 };
 
 type DeckCount = {
@@ -24,6 +26,7 @@ type DeckCount = {
   teamName: string;
   teamColor: string;
   canonicalName: string;
+  avatarStill?: string;
 };
 
 type RulesSection = { id: string; title: string; body: string[] };
@@ -421,6 +424,27 @@ function PlayTab({ game }: { game: GamePayload }) {
               {roleHidden ? "Role hidden" : role.name}
             </h3>
           </div>
+          {!roleHidden && role.avatarStill && (
+            <div className="flex justify-center px-5 pt-5">
+              <div className="h-44 w-44 overflow-hidden rounded-full border-4 border-white/80 bg-white/40 shadow-md">
+                <video
+                  key={role.avatarAnimation}
+                  className="h-full w-full object-cover"
+                  poster={role.avatarStill}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label={`${role.name} avatar`}
+                >
+                  {role.avatarAnimation ? (
+                    <source src={role.avatarAnimation} type="video/webm" />
+                  ) : null}
+                </video>
+              </div>
+            </div>
+          )}
           {!roleHidden && (
             <div className="space-y-4 px-5 py-5 text-[var(--ink)]">
               <p className="text-base leading-relaxed">{role.summary}</p>
@@ -599,12 +623,24 @@ function AdminTab({
                       : "border-[var(--line)] bg-white/75"
                   } ${isPrimary ? "opacity-90" : ""}`}
                 >
-                  <span>
-                    <span className="font-semibold text-[var(--ink)]">{c.name}</span>
-                    <span className="mt-0.5 block text-xs text-[var(--ink-soft)]">
-                      {c.teamName}
-                      {isPrimary ? " · required" : ""}
-                      {isExcluded ? " · excluded" : ""}
+                  <span className="flex min-w-0 items-center gap-3">
+                    {c.avatarStill ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={c.avatarStill}
+                        alt=""
+                        className="h-10 w-10 shrink-0 rounded-full object-cover"
+                      />
+                    ) : null}
+                    <span className="min-w-0">
+                      <span className="font-semibold text-[var(--ink)]">
+                        {c.name}
+                      </span>
+                      <span className="mt-0.5 block text-xs text-[var(--ink-soft)]">
+                        {c.teamName}
+                        {isPrimary ? " · required" : ""}
+                        {isExcluded ? " · excluded" : ""}
+                      </span>
                     </span>
                   </span>
                   <span

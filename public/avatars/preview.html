@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Avatar preview — Two Flocks</title>
+    <style>
+      :root {
+        --ink: #1c241c;
+        --ink-soft: #4a5548;
+        --line: #cfd6c6;
+        --meadow: #2f6b4f;
+        --bg: #eef3e8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 1rem 1rem 3rem;
+        font-family: system-ui, -apple-system, sans-serif;
+        background:
+          radial-gradient(ellipse 120% 80% at 10% -10%, #c8e0c0 0%, transparent 50%),
+          radial-gradient(ellipse 90% 70% at 100% 0%, #e8d5c4 0%, transparent 45%),
+          linear-gradient(165deg, #eef3e8 0%, #f4ebe1 48%, #e7eef0 100%);
+        color: var(--ink);
+      }
+      h1 {
+        font-size: 1.6rem;
+        margin: 0 0 0.25rem;
+      }
+      .sub {
+        color: var(--ink-soft);
+        margin: 0 0 1.25rem;
+        font-size: 0.95rem;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+        max-width: 920px;
+      }
+      .card {
+        margin: 0;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 12px 10px 14px;
+        text-align: center;
+      }
+      .avatar {
+        width: 112px;
+        height: 112px;
+        margin: 0 auto;
+        border-radius: 999px;
+        overflow: hidden;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 14px rgba(28, 36, 28, 0.12);
+        background: #f3efe6;
+      }
+      .avatar video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .name {
+        margin-top: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .role {
+        margin-top: 2px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--meadow);
+        text-transform: capitalize;
+      }
+      .meta {
+        margin-top: 4px;
+        font-size: 0.7rem;
+        color: var(--ink-soft);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Two Flocks — guy preview</h1>
+    <p class="sub">
+      Fake lobby players with Muse idle animations. Not a real game — just for checking looks.
+    </p>
+    <div class="grid" id="grid"></div>
+    <script>
+      const ROSTER = [
+        { guy: "Tim", role: "The Lamb", key: "lamb", team: "Sheep" },
+        { guy: "Marcus", role: "The Wolf", key: "wolf", team: "Wolves" },
+        { guy: "Diego", role: "Sheep", key: "sheep", team: "Sheep" },
+        { guy: "Owen", role: "Wolf", key: "wolf", team: "Wolves" },
+        { guy: "Noah", role: "Moonbitten", key: "werewolf", team: "Wanderers" },
+        { guy: "Sam", role: "Shepherd", key: "shepherd", team: "Sheep" },
+        { guy: "Kai", role: "Alpha", key: "alpha", team: "Wolves" },
+        { guy: "Ben", role: "Shy Sheep", key: "shy-sheep", team: "Sheep" },
+        { guy: "Leo", role: "Shy Wolf", key: "shy-wolf", team: "Wolves" },
+        { guy: "Chris", role: "Infiltrator Sheep", key: "infiltrator-sheep", team: "Sheep" },
+        { guy: "Jake", role: "Infiltrator Wolf", key: "infiltrator-wolf", team: "Wolves" },
+        { guy: "Ryan", role: "Broker Sheep", key: "broker-sheep", team: "Sheep" },
+        { guy: "Cole", role: "Broker Wolf", key: "broker-wolf", team: "Wolves" },
+        { guy: "Max", role: "Guardian Sheep", key: "guardian-sheep", team: "Sheep" },
+        { guy: "Drew", role: "Guardian Wolf", key: "guardian-wolf", team: "Wolves" },
+        { guy: "Eli", role: "Silent Sheep", key: "silent-sheep", team: "Sheep" },
+        { guy: "Jude", role: "Silent Wolf", key: "silent-wolf", team: "Wolves" },
+        { guy: "Nate", role: "Gossip Sheep", key: "gossip-sheep", team: "Sheep" },
+        { guy: "Wes", role: "Gossip Wolf", key: "gossip-wolf", team: "Wolves" },
+        { guy: "Finn", role: "Lucky Sheep", key: "lucky-sheep", team: "Sheep" },
+        { guy: "Ash", role: "Lost Lamb", key: "lost-lamb", team: "Wanderers" },
+        { guy: "Rex", role: "Black Sheep", key: "black-sheep", team: "Wanderers" },
+      ];
+
+      const grid = document.getElementById("grid");
+      for (const p of ROSTER) {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="avatar">
+            <video
+              src="/avatars/animations/${p.key}-idle.webm"
+              poster="/avatars/stills/${p.key}.webp"
+              autoplay muted loop playsinline
+              aria-label="${p.role}"
+            ></video>
+          </div>
+          <div class="name">${p.guy}</div>
+          <div class="role">${p.role}</div>
+          <div class="meta">${p.team}</div>
+        `;
+        grid.appendChild(card);
+      }
+    </script>
+  </body>
+</html>

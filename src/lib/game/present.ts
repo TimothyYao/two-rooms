@@ -1,10 +1,17 @@
-import { getRoleTheme, getTeamTheme, ROLE_CATALOG, type RoleId } from "@/lib/roles";
+import {
+  getAvatarAssets,
+  getRoleTheme,
+  getTeamTheme,
+  ROLE_CATALOG,
+  type RoleId,
+} from "@/lib/roles";
 import { HOSTAGE_CHART, ROUND_PLAN } from "@/lib/rules/content";
 
 export function presentRole(roleId: RoleId) {
   const mech = ROLE_CATALOG[roleId];
   const theme = getRoleTheme(roleId);
   const team = getTeamTheme(mech.team);
+  const avatar = getAvatarAssets(roleId);
   return {
     roleId,
     name: theme.name,
@@ -16,6 +23,8 @@ export function presentRole(roleId: RoleId) {
     teamColorMuted: team.colorMuted,
     canonicalName: mech.canonicalName,
     primary: mech.primary,
+    avatarStill: avatar.still,
+    avatarAnimation: avatar.animation,
   };
 }
 
@@ -32,6 +41,7 @@ export function presentDeckCounts(
       teamName: string;
       teamColor: string;
       canonicalName: string;
+      avatarStill: string;
     }
   >();
 
@@ -49,6 +59,7 @@ export function presentDeckCounts(
         teamName: p.teamName,
         teamColor: p.teamColor,
         canonicalName: p.canonicalName,
+        avatarStill: p.avatarStill,
       });
     }
   }
