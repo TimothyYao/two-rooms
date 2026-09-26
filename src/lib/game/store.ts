@@ -1,4 +1,5 @@
 import { buildDefaultDeck, shuffle, type RoleId } from "@/lib/roles";
+import { loadGame, saveGame, usingPersistentStore, withGameLock } from "./db";
 import {
   ADMIN_NAME,
   isAdminName,
@@ -7,31 +8,7 @@ import {
   type Player,
 } from "./types";
 
-const globalStore = globalThis as unknown as {
-  __twoFlocksGame?: GameState;
-};
-
-function emptyState(): GameState {
-  return {
-    phase: "lobby",
-    players: [],
-    deckConfig: { excluded: [], replacements: [] },
-    deck: [],
-    dealGeneration: 0,
-  };
-}
-
-export function getGame(): GameState {
-  if (!globalStore.__twoFlocksGame) {
-    globalStore.__twoFlocksGame = emptyState();
-  }
-  return globalStore.__twoFlocksGame;
-}
-
-export function resetGame(): GameState {
-  globalStore.__twoFlocksGame = emptyState();
-  return globalStore.__twoFlocksGame;
-}
+export { usingPersistentStore };
 
 function rebuildDeck(state: GameState): void {
   state.deck = buildDefaultDeck({
@@ -41,42 +18,63 @@ function rebuildDeck(state: GameState): void {
   });
 }
 
-export function joinGame(name: string): { player: Player; state: GameState } {
-  const state = getGame();
-  const trimmed = name.trim();
-  if (!trimmed) {
-    throw new Error("Name is required");
-  }
-  if (trimmed.length > 24) {
-    throw new Error("Name is too long");
-  }
+export async function getGame(): Promise<GameState> {
+  return loadGame();
+}
 
-  const existing = state.players.find(
-    (p) => p.name.toLowerCase() === trimmed.toLowerCase(),
-  );
-  if (existing) {
-    return { player: existing, state };
-  }
+export async function resetGame(): Promise<GameState> {
+  return withGameLock(async (state) => {
+    state.phase = "lobby";
+    state.players = [];
+    state.deckConfig = { excluded: [], replacements: [] };
+    state.deck = [];
+    state.dealGeneration = 0;
+    delete state.startedAt;
+    return state;
+  });
+}
 
-  // Only one Tim (admin)
-  if (isAdminName(trimmed) && state.players.some((p) => isAdminName(p.name))) {
-    throw new Error("Tim is already in the game");
-  }
+export async function joinGame(
+  name: string,
+): Promise<{ player: Player; state: GameState }> {
+  return withGameLock(async (state) => {
+    const trimmed = name.trim();
+    if (!trimmed) {
+      throw new Error("Name is required");
+    }
+    if (trimmed.length > 24) {
+      throw new Error("Name is too long");
+    }
 
-  const player: Player = {
-    id: crypto.randomUUID(),
-    name: trimmed,
-    joinedAt: Date.now(),
-  };
+    const existing = state.players.find(
+      (p) => p.name.toLowerCase() === trimmed.toLowerCase(),
+    );
+    if (existing) {
+      return { player: existing, state };
+    }
 
-  state.players.push(player);
-  rebuildDeck(state);
+    if (
+      isAdminName(trimmed) &&
+      state.players.some((p) => isAdminName(p.name))
+    ) {
+      throw new Error("Tim is already in the game");
+    }
 
-  if (state.phase === "in_progress") {
-    autoAssignRole(state, player);
-  }
+    const player: Player = {
+      id: crypto.randomUUID(),
+      name: trimmed,
+      joinedAt: Date.now(),
+    };
 
-  return { player, state };
+    state.players.push(player);
+    rebuildDeck(state);
+
+    if (state.phase === "in_progress") {
+      autoAssignRole(state, player);
+    }
+
+    return { player, state };
+  });
 }
 
 function autoAssignRole(state: GameState, player: Player): void {
@@ -91,7 +89,6 @@ function autoAssignRole(state: GameState, player: Player): void {
     needed.set(id, (needed.get(id) ?? 0) + 1);
   }
 
-  // Prefer an unused slot from the planned deck
   for (const id of state.deck) {
     const have = used.get(id) ?? 0;
     const want = needed.get(id) ?? 0;
@@ -102,17 +99,14 @@ function autoAssignRole(state: GameState, player: Player): void {
     }
   }
 
-  // Deck exhausted (extra late joiner): extend with balanced fillers + rebuild counts
   const assigned = state.players.filter((p) => p.roleId).length;
-  const nextFiller: RoleId =
-    assigned % 2 === 0 ? "blue_team" : "red_team";
+  const nextFiller: RoleId = assigned % 2 === 0 ? "blue_team" : "red_team";
   state.deck.push(nextFiller);
   player.roleId = nextFiller;
 }
 
 function dealAll(state: GameState): void {
   rebuildDeck(state);
-  // If player count exceeded deck somehow, rebuild already sized to players
   const roles = shuffle([...state.deck]);
   state.players.forEach((p, i) => {
     p.roleId = roles[i];
@@ -122,56 +116,64 @@ function dealAll(state: GameState): void {
   state.startedAt = Date.now();
 }
 
-export function startGame(requesterName: string): GameState {
-  assertAdmin(requesterName);
-  const state = getGame();
-  if (state.players.length < 6) {
-    throw new Error("Need at least 6 players (Two Rooms and a Boom minimum)");
-  }
-  dealAll(state);
-  return state;
+export async function startGame(requesterName: string): Promise<GameState> {
+  return withGameLock(async (state) => {
+    assertAdmin(requesterName);
+    if (state.players.length < 6) {
+      throw new Error("Need at least 6 players (Two Rooms and a Boom minimum)");
+    }
+    dealAll(state);
+    return state;
+  });
 }
 
-export function redeal(requesterName: string): GameState {
-  assertAdmin(requesterName);
-  const state = getGame();
-  if (state.players.length < 1) {
-    throw new Error("No players to deal");
-  }
-  dealAll(state);
-  return state;
+export async function redeal(requesterName: string): Promise<GameState> {
+  return withGameLock(async (state) => {
+    assertAdmin(requesterName);
+    if (state.players.length < 1) {
+      throw new Error("No players to deal");
+    }
+    dealAll(state);
+    return state;
+  });
 }
 
-export function returnToLobby(requesterName: string): GameState {
-  assertAdmin(requesterName);
-  const state = getGame();
-  state.phase = "lobby";
-  state.startedAt = undefined;
-  for (const p of state.players) {
-    delete p.roleId;
-  }
-  rebuildDeck(state);
-  return state;
+export async function returnToLobby(requesterName: string): Promise<GameState> {
+  return withGameLock(async (state) => {
+    assertAdmin(requesterName);
+    state.phase = "lobby";
+    state.startedAt = undefined;
+    for (const p of state.players) {
+      delete p.roleId;
+    }
+    rebuildDeck(state);
+    return state;
+  });
 }
 
-export function updateDeckConfig(
+export async function updateDeckConfig(
   requesterName: string,
   config: Partial<DeckConfig>,
-): GameState {
-  assertAdmin(requesterName);
-  const state = getGame();
-  if (config.excluded) state.deckConfig.excluded = config.excluded;
-  if (config.replacements) state.deckConfig.replacements = config.replacements;
-  rebuildDeck(state);
-  return state;
+): Promise<GameState> {
+  return withGameLock(async (state) => {
+    assertAdmin(requesterName);
+    if (config.excluded) state.deckConfig.excluded = config.excluded;
+    if (config.replacements) state.deckConfig.replacements = config.replacements;
+    rebuildDeck(state);
+    return state;
+  });
 }
 
-export function removePlayer(requesterName: string, playerId: string): GameState {
-  assertAdmin(requesterName);
-  const state = getGame();
-  state.players = state.players.filter((p) => p.id !== playerId);
-  rebuildDeck(state);
-  return state;
+export async function removePlayer(
+  requesterName: string,
+  playerId: string,
+): Promise<GameState> {
+  return withGameLock(async (state) => {
+    assertAdmin(requesterName);
+    state.players = state.players.filter((p) => p.id !== playerId);
+    rebuildDeck(state);
+    return state;
+  });
 }
 
 function assertAdmin(name: string) {
@@ -191,6 +193,7 @@ export function publicSnapshot(
   deckCounts: { roleId: RoleId; count: number }[];
   deckConfig: DeckConfig;
   dealGeneration: number;
+  persistent: boolean;
   you?: {
     id: string;
     name: string;
@@ -221,6 +224,7 @@ export function publicSnapshot(
     })),
     deckConfig: state.deckConfig,
     dealGeneration: state.dealGeneration,
+    persistent: usingPersistentStore(),
     you: viewer
       ? {
           id: viewer.id,
@@ -231,3 +235,6 @@ export function publicSnapshot(
       : undefined,
   };
 }
+
+// Re-export for rare direct saves (tests)
+export { saveGame, loadGame };

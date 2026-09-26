@@ -17,13 +17,7 @@ import { RULES_SECTIONS } from "@/lib/rules/content";
 export const dynamic = "force-dynamic";
 
 type ActionBody = {
-  action:
-    | "start"
-    | "redeal"
-    | "lobby"
-    | "reset"
-    | "deck"
-    | "kick";
+  action: "start" | "redeal" | "lobby" | "reset" | "deck" | "kick";
   adminName: string;
   playerId?: string;
   excluded?: RoleId[];
@@ -31,8 +25,8 @@ type ActionBody = {
   kickPlayerId?: string;
 };
 
-function payload(playerId?: string) {
-  const state = getGame();
+async function payload(playerId?: string) {
+  const state = await getGame();
   const snap = publicSnapshot(state, playerId);
   return {
     ...snap,
@@ -51,32 +45,32 @@ export async function POST(request: Request) {
 
     switch (action) {
       case "start":
-        startGame(adminName);
+        await startGame(adminName);
         break;
       case "redeal":
-        redeal(adminName);
+        await redeal(adminName);
         break;
       case "lobby":
-        returnToLobby(adminName);
+        await returnToLobby(adminName);
         break;
       case "reset":
-        resetGame();
+        await resetGame();
         break;
       case "deck":
-        updateDeckConfig(adminName, {
+        await updateDeckConfig(adminName, {
           excluded: body.excluded,
           replacements: body.replacements,
         });
         break;
       case "kick":
         if (!body.kickPlayerId) throw new Error("kickPlayerId required");
-        removePlayer(adminName, body.kickPlayerId);
+        await removePlayer(adminName, body.kickPlayerId);
         break;
       default:
         throw new Error("Unknown action");
     }
 
-    return NextResponse.json(payload(playerId));
+    return NextResponse.json(await payload(playerId));
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Action failed" },

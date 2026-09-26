@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as { name?: string };
-    const { player, state } = joinGame(body.name ?? "");
+    const { player, state } = await joinGame(body.name ?? "");
     const snap = publicSnapshot(state, player.id);
     return NextResponse.json({
       playerId: player.id,

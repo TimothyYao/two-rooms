@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const playerId = searchParams.get("playerId") ?? undefined;
-  const state = getGame();
+  const state = await getGame();
   const snap = publicSnapshot(state, playerId);
 
   return NextResponse.json({
