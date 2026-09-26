@@ -17,6 +17,11 @@
 /.next/
 /out/
 
+# playwright / local capture
+/test-results/
+/playwright-report/
+/blob-report/
+
 # production
 /build
 
